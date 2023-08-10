@@ -18,6 +18,7 @@ import com.vaadin.v7.data.util.BeanItemContainer;
 import com.vaadin.v7.ui.Grid;
 import com.vaadin.v7.ui.TextField;
 
+
 /* User Interface written in Java.
  *
  * Define the user interface shown on the Vaadin generated web page by extending the UI class.
@@ -27,6 +28,7 @@ import com.vaadin.v7.ui.TextField;
 @Title("sampleapp")
 @Theme("valo")
 @Widgetset("com.vaadin.v7.Vaadin7WidgetSet")
+    public class AddressbookUI extends UI {
 
 
     /*
