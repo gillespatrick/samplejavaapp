@@ -4,9 +4,6 @@ pipeline{
  		 maven 'Maven'
 	}
 
-  triggers{
-    pollSCM '* * * * *'
-  }
   
   stages {
   stage('codecompile') {
