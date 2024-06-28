@@ -1,54 +1,70 @@
-pipeline {
-    agent any
-tools {
+pipeline{
+	agent any
+	tools {
  		 maven 'Maven'
 	}
-    stages {
-        stage('compile') {
-	   steps {
-                echo 'compiling..'
-		git url: 'https://github.com/gillespatrick/samplejavaapp/'
-		sh 'mvn compile'
-           }
-        }
-        stage('codereview-pmd') {
-	   steps {
-                echo 'codereview..'
-		sh 'mvn -P metrics pmd:pmd'
-           }
-	   post {
-               success {
-		   recordIssues enabledForFailure: true, tool: pmdParser(pattern: '**/target/pmd.xml')
-               }
-           }		
-        }
-        stage('unit-test') {
-	   steps {
-                echo 'unittest..'
-	        sh 'mvn test'
-                 }
-	   post {
-               success {
-                   junit 'target/surefire-reports/*.xml'
-               }
-           }			
-        }
-        stage('codecoverage') {
-	   steps {
-                echo 'unittest..'
-	        sh 'mvn verify'
-                 }
-	   post {
-               success {
-                   jacoco()
-               }
-           }			
-        }
-        stage('package') {
-	   steps {
-                echo 'package......'
-		sh 'mvn package'	
-           }	
-		
+
+  triggers{
+    pollSCM '* * * * *'
+  }
+  
+  stages {
+  stage('codecompile') {
+    steps {
+    git branch: 'main', url: 'https://github.com/gillespatrick/samplejavaapp/'
+    sh 'mvn compile'
     }
+
+     }
+
+  stage('codereview') {
+    steps {
+    sh 'mvn -P metrics pmd:pmd '
+    }
+
+    post {
+      always {
+        recordIssues sourceCodeRetention: 'LAST_BUILD', tools: [pmdParser(pattern: '**/pmd.xml')]
+      }
+    }
+  }
+
+  stage('codetest') {
+    steps {
+      sh 'mvn test'
+      }
+
+    post {
+      always {
+       junit stdioRetention: '', testResults: 'target/surefire-reports/*.xml '
+       }
+    }
+  }
+
+  stage('codecoverage') {
+    steps {
+     sh 'mvn verify'
+    }
+
+    post {
+      always {
+        jacoco maximumLineCoverage: '70', minimumLineCoverage: '30'
+      }
+    }
+  }
+
+  stage('codepackage') {
+    steps {
+      sh 'mvn package'
+    }
+
+    post {
+      always {
+        archiveArtifacts artifacts: 'target/*.war', followSymlinks: false
+      }
+    }
+  }
+
+}
+
 }
