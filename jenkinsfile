@@ -3,6 +3,8 @@ pipeline{
 	tools {
  		 maven 'Maven'
 	}
+
+  
   
   stages {
   stage('codecompile') {
@@ -37,14 +39,28 @@ pipeline{
     }
   }
 
- 
+  stage('codecoverage') {
+    steps {
+     sh 'mvn verify'
+    }
+
+    post {
+      always {
+        jacoco maximumLineCoverage: '70', minimumLineCoverage: '30'
+      }
+    }
+  }
 
   stage('codepackage') {
     steps {
       sh 'mvn package'
     }
 
-   
+    post {
+      always {
+        archiveArtifacts artifacts: 'target/*.war', followSymlinks: false
+      }
+    }
   }
 
 }
