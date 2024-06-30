@@ -41,7 +41,7 @@ pipeline{
 
   stage('codepackage') {
     steps {
-      sh script: 'mvn package'
+      sh 'mvn package'
     }
 
    
