@@ -46,11 +46,7 @@ pipeline{
       sh 'mvn package'
     }
 
-    post {
-      always {
-        archiveArtifacts artifacts: 'target/*.war', followSymlinks: false
-      }
-    }
+   
   }
 
 }
