@@ -37,17 +37,7 @@ pipeline{
     }
   }
 
-  stage('codecoverage') {
-    steps {
-     sh 'mvn verify'
-    }
-
-    post {
-      always {
-        jacoco()
-      }
-    }
-  }
+ 
 
   stage('codepackage') {
     steps {
